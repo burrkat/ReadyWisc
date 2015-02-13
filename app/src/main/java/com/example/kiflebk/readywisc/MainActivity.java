@@ -36,14 +36,14 @@ public class MainActivity extends ActionBarActivity {
 
         UpdateButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) {  // put your info into the DB
                 String nameData = name.getText().toString();
                 String emailData = email.getText().toString();
                 addUser(nameData, emailData, 0);
             }
         });
 
-        DisplayButton.setOnClickListener(new View.OnClickListener() {
+        DisplayButton.setOnClickListener(new View.OnClickListener() { // Display info from the DB
             @Override
             public void onClick(View v) {
                 Cursor c = mDatabaseHelper.query(MyDatabaseHelper.TABLE_USERS, MyDatabaseHelper.COL_NAME);
@@ -63,7 +63,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
-    private void addUser(String name, String email, long dateOfBirthMillis) {
+    private void addUser(String name, String email, long dateOfBirthMillis) { // Adds user to the actual DB, using myDBhelper
 
         ContentValues values = new ContentValues();
 

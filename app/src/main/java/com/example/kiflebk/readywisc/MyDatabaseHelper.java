@@ -11,6 +11,7 @@ import android.provider.BaseColumns;
  * Created by kiflebk on 2/11/15.
  */
 public class MyDatabaseHelper extends SQLiteOpenHelper {
+    // components of the table which can be changed later to join up with other team later on
 
     public static final String TABLE_USERS = "users";
 
@@ -54,6 +55,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
+
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS + ";");
 
         onCreate(db);
@@ -62,7 +64,7 @@ public class MyDatabaseHelper extends SQLiteOpenHelper {
 
     public long insert(String tableName, ContentValues values) throws NotValidException {
 
-        validate(values);
+        validate(values); //checks values
 
         return getWritableDatabase().insert(tableName, null, values);
 
