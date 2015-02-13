@@ -63,7 +63,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
-    private void addUser(String name, String email, long dateOfBirthMillis) { // Adds user to the actual DB, using myDBhelper
+    private void addUser(String name, String email, long dateOfBirthMillis) {   // Adds user to the actual DB, using myDBhelper
 
         ContentValues values = new ContentValues();
 
