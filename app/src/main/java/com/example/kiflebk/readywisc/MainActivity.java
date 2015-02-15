@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,11 +15,14 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
+import java.util.Date;
+import java.util.concurrent.Semaphore;
+
 
 public class MainActivity extends ActionBarActivity {
 
     private MyDatabaseHelper mDatabaseHelper;
-    private Button DisplayButton, UpdateButton;
+    private Button DisplayButton, UpdateButton, getDBButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +31,7 @@ public class MainActivity extends ActionBarActivity {
         mDatabaseHelper = new MyDatabaseHelper(this);
         UpdateButton = (Button) findViewById(R.id.UpdateButton);
         DisplayButton = (Button) findViewById(R.id.DisplayButton);
+        getDBButton = (Button) findViewById(R.id.getDBButton);
         final EditText name = (EditText) findViewById(R.id.editText);
         final EditText email = (EditText) findViewById(R.id.editText2);
 
@@ -60,6 +65,39 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
+        //click listener for the new button to update from the web database
+        getDBButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //this string can be dynamically allocated later, I hardcoded just for the proof of concept
+                String[][] webNames = new String[3][3];
+
+                /*new runnable object used to pull the data from the web
+                android will only let you do json calls from a thread other
+                than the main
+                 */
+
+                DBUpdateFromWeb foo = new DBUpdateFromWeb();
+                Thread t = new Thread(foo);
+                t.start();
+                try {
+                    t.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                //passed values returned from the json request
+                webNames = foo.getResults();
+
+                //places the new web db data into the local db
+                for(int i = 0; i<3 ;i++){
+                    String nameData = webNames[i][0];
+                    String emailData = webNames[i][1];
+                    addUser(nameData, emailData, 0);
+                }
+            }
+        });
     }
 
 

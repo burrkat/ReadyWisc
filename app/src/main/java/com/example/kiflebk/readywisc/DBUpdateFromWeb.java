@@ -17,13 +17,31 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
 /**
- * Created by piela_000 on 2/14/2015.
+ * Created by piela_000 on 2/14/2015.  Class is used as a thread object to
+ * query the web database and return the results as a 2d array to the caller
  */
-public class DBUpdateFromWeb {
+public class DBUpdateFromWeb implements Runnable{
 
-    public String[] updateLocalDB() {
+    /*string which holds the results from the thread after the run call to be accessed later
+      with the getResults method.  It can be dynamically allocated later
+      */
+    private volatile String[][] results = new String[3][3];
+
+    @Override
+    //run thread calls the helper and saves results
+    public void run() {
+        results = updateLocalDB();
+    }
+
+    public String[][] getResults(){
+        return results;
+    }
+
+    //main thread to complete query and return results
+    public static String[][] updateLocalDB() {
         JSONArray jArray = null;
 
         String result = null;
@@ -32,14 +50,18 @@ public class DBUpdateFromWeb {
 
         InputStream is = null;
 
-        String[] ct_name = null;
+        String[][] ct_name = new String[3][3];
 
         ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-//http post
+
+        // here we try to create a new http client to connect to the .php database query
         try {
             HttpClient httpclient = new DefaultHttpClient();
 
-            //Why to use 10.0.2.2
+            /* the web end is set up with a php script to query the database
+                asking for the info we need.  The url listed will display
+                the results in JSON format for java to read.
+             */
             HttpPost httppost = new HttpPost("http://piela.co/database/");
             httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
             HttpResponse response = httpclient.execute(httppost);
@@ -65,14 +87,17 @@ public class DBUpdateFromWeb {
         }
 
         String name;
+
+        //converts JSON object to the string array we need
         try {
             jArray = new JSONArray(result);
             JSONObject json_data = null;
 
-            ct_name = new String[jArray.length()];
+            //ct_name = new String[jArray.length()];
             for (int i = 0; i < jArray.length(); i++) {
                 json_data = jArray.getJSONObject(i);
-                ct_name[i] = json_data.getString("name"); //here "Name" is the column name in database
+                ct_name[i][0] = json_data.getString("name"); //gets the name category of the json string
+                ct_name[i][1] = json_data.getString("email"); //gets the email column
             }
         } catch (JSONException e1) {
 
