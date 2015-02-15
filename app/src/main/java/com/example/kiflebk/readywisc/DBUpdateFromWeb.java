@@ -1,6 +1,7 @@
 package com.example.kiflebk.readywisc;
 
 import android.util.Log;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -17,7 +18,6 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.concurrent.Semaphore;
 
 /**
  * Created by piela_000 on 2/14/2015.  Class is used as a thread object to
@@ -25,23 +25,16 @@ import java.util.concurrent.Semaphore;
  */
 public class DBUpdateFromWeb implements Runnable{
 
-    /*string which holds the results from the thread after the run call to be accessed later
-      with the getResults method.  It can be dynamically allocated later
-      */
-    private volatile String[][] results = new String[3][3];
 
     @Override
-    //run thread calls the helper and saves results
+    //run thread calls the helper which will update the SQLite db
     public void run() {
-        results = updateLocalDB();
+        updateLocalDB();
     }
 
-    public String[][] getResults(){
-        return results;
-    }
 
     //main thread to complete query and return results
-    public static String[][] updateLocalDB() {
+    public static void updateLocalDB() {
         JSONArray jArray = null;
 
         String result = null;
@@ -70,7 +63,7 @@ public class DBUpdateFromWeb implements Runnable{
         } catch (Exception e) {
             Log.e("log_tag", "Error in http connection" + e.toString());
         }
-//convert response to string
+        //convert response to string
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(is, "iso-8859-1"), 8);
             sb = new StringBuilder();
@@ -86,7 +79,6 @@ public class DBUpdateFromWeb implements Runnable{
             Log.e("log_tag", "Error converting result " + e.toString());
         }
 
-        String name;
 
         //converts JSON object to the string array we need
         try {
@@ -98,13 +90,15 @@ public class DBUpdateFromWeb implements Runnable{
                 json_data = jArray.getJSONObject(i);
                 ct_name[i][0] = json_data.getString("name"); //gets the name category of the json string
                 ct_name[i][1] = json_data.getString("email"); //gets the email column
+
+                // inserts data into the local database
+                MainActivity.addUser(ct_name[i][0], ct_name[i][1], 0);
             }
         } catch (JSONException e1) {
 
         } catch (ParseException e1) {
             e1.printStackTrace();
         }
-        return ct_name;
     }
 }
 
