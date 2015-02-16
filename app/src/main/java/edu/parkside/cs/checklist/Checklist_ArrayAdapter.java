@@ -37,7 +37,7 @@ public class Checklist_ArrayAdapter extends ArrayAdapter {
     }
 
     @Override
-    public View getView(int position, final View convertView, ViewGroup parent) {
+    public View getView(final int position, final View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -53,6 +53,7 @@ public class Checklist_ArrayAdapter extends ArrayAdapter {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, Checklist_Item_ListView.class);
+                intent.putExtra(Checklist.EXTRA_MESSAGE, list.get(position));
                 context.startActivity(intent);
             }
         });

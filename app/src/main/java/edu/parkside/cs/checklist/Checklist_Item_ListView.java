@@ -12,8 +12,11 @@ import java.util.ArrayList;
 
 public class Checklist_Item_ListView extends ActionBarActivity {
 
+    public static final String EXTRA_MESSAGE = "edu.parkside.cs.checklist_item_listview";
+
     Checklist_Item_ArrayAdapter checklist_item_arrayAdapter;
     ListView checklist_item_listView;
+    Checklist_Row passedChecklist;
 
     private ListView getChecklist_item_listView(){
         if (checklist_item_listView == null)
@@ -35,8 +38,16 @@ public class Checklist_Item_ListView extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checklist_item_listview);
 
+        // Retrieve the passed checklist.
+        passedChecklist = getIntent().getParcelableExtra(Checklist.EXTRA_MESSAGE);
+
         // Populate the listView with the contents of the Checklist table.
-        populateListView();
+        new Runnable() {
+            @Override
+            public void run() {
+                populateListView();
+            }
+        }.run();
     }
 
 

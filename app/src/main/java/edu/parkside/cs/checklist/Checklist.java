@@ -12,6 +12,8 @@ import java.util.ArrayList;
 
 public class Checklist extends ActionBarActivity {
 
+    public final static String EXTRA_MESSAGE = "edu.parkside.cs.checklist.checklist";
+
     Checklist_ArrayAdapter arrayAdapter;
     ListView checklistListView;
 
@@ -38,7 +40,12 @@ public class Checklist extends ActionBarActivity {
         setContentView(R.layout.activity_checklist);
 
         // Populate the listView with the contents of the Checklist table.
-        populateListView();
+        new Runnable() {
+            @Override
+            public void run() {
+                populateListView();
+            }
+        }.run();
     }
 
 

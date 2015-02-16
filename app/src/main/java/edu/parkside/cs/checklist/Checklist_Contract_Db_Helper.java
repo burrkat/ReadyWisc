@@ -172,9 +172,11 @@ public class Checklist_Contract_Db_Helper extends SQLiteOpenHelper {
                 cursor.moveToFirst();
                 do {
                     Checklist_Row checklist_row = new Checklist_Row();
+                    int entryid_index = cursor.getColumnIndex((Checklist_Contract.Checklist.COLUMN_NAME_ENTRY_ID));
                     int titleIndex = cursor.getColumnIndex(Checklist_Contract.Checklist.COLUMN_NAME_TITLE);
                     int progressIndex = cursor.getColumnIndex(Checklist_Contract.Checklist.COLUMN_NAME_PROGRESS);
 
+                    checklist_row.setEntryid(cursor.getInt(entryid_index));
                     checklist_row.setTitle(cursor.getString(titleIndex));
                     checklist_row.setProgress(cursor.getInt(progressIndex));
 
@@ -215,11 +217,17 @@ public class Checklist_Contract_Db_Helper extends SQLiteOpenHelper {
                 cursor.moveToFirst();
                 do {
                     Checklist_Item_Row checklist_item_row = new Checklist_Item_Row();
+                    int entryid_index = cursor.getColumnIndex(Checklist_Contract.Item.COLUMN_NAME_ENTRY_ID);
                     int nameIndex = cursor.getColumnIndex(Checklist_Contract.Item.COLUMN_NAME_NAME);
+                    int qtyIndex = cursor.getColumnIndex(Checklist_Contract.Item.COLUMN_NAME_QTY);
                     int isCheckedIndex = cursor.getColumnIndex(Checklist_Contract.Item.COLUMN_NAME_COMPLETE);
+                    int checklist_entry_index = cursor.getColumnIndex(Checklist_Contract.Item.COLUMN_NAME_CHECKLIST_ID);
 
+                    checklist_item_row.setEntryid(cursor.getInt(entryid_index));
                     checklist_item_row.setName(cursor.getString(nameIndex));
+                    checklist_item_row.setQty(cursor.getInt(qtyIndex));
                     checklist_item_row.setChecked(cursor.getInt(isCheckedIndex));
+                    checklist_item_row.setChecklist_entryid(cursor.getInt(checklist_entry_index));
 
                     rowList.add(checklist_item_row);
                 } while (cursor.moveToNext());
