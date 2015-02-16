@@ -42,4 +42,9 @@ public final class Checklist_Contract {
         public static final String ALL_ITEMS = "SELECT * FROM " +
                 Checklist.TABLE_NAME;
     }
+
+    public static abstract class Checklist_Item_Queries{
+        public static final String ALL_ITEMS = "SELECT * FROM " +
+                Item.TABLE_NAME;
+    }
 }

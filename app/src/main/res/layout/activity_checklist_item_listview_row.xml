@@ -15,6 +15,7 @@
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/checklist_item_listview_row_checkbox"
         android:layout_alignParentRight="true"
         android:layout_centerInParent="true"
         />

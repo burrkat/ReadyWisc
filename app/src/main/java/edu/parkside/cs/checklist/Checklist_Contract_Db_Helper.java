@@ -189,7 +189,7 @@ public class Checklist_Contract_Db_Helper extends SQLiteOpenHelper {
         return rowList;
     }
 
-    public static void add_Checklist(Checklist_Row checklist_row, Context context){
+    public static void addChecklist(Checklist_Row checklist_row, Context context){
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(Checklist_Contract.Checklist.COLUMN_NAME_TITLE, checklist_row.getTitle());
@@ -200,5 +200,36 @@ public class Checklist_Contract_Db_Helper extends SQLiteOpenHelper {
         database.close();
     }
 
+    public ArrayList<Checklist_Item_Row> returnChecklistItemRows(String[] args){
+
+        ArrayList<Checklist_Item_Row> rowList = new ArrayList<Checklist_Item_Row>();
+        Cursor cursor;
+
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        if(args == null)
+        {
+            cursor = database.rawQuery(Checklist_Contract.Checklist_Item_Queries.ALL_ITEMS, null);
+
+            if (cursor.moveToFirst()) {
+                cursor.moveToFirst();
+                do {
+                    Checklist_Item_Row checklist_item_row = new Checklist_Item_Row();
+                    int nameIndex = cursor.getColumnIndex(Checklist_Contract.Item.COLUMN_NAME_NAME);
+                    int isCheckedIndex = cursor.getColumnIndex(Checklist_Contract.Item.COLUMN_NAME_COMPLETE);
+
+                    checklist_item_row.setName(cursor.getString(nameIndex));
+                    checklist_item_row.setChecked(cursor.getInt(isCheckedIndex));
+
+                    rowList.add(checklist_item_row);
+                } while (cursor.moveToNext());
+            } else {
+                rowList.add(new Checklist_Item_Row());
+            }
+        }
+
+        database.close();
+        return rowList;
+    }
 
 }
