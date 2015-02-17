@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -80,6 +81,7 @@ public class MainActivity extends ActionBarActivity {
                 DBUpdateFromWeb foo = new DBUpdateFromWeb();
                 Thread t = new Thread(foo);
                 t.start();
+                Toast.makeText(ctx, "Local DB Updated", Toast.LENGTH_SHORT);
             }
         });
     }

@@ -100,9 +100,6 @@ public class DBUpdateFromWeb implements Runnable{
         } catch (ParseException e1) {
             e1.printStackTrace();
         }
-
-        Toast.makeText(MainActivity.ctx, "Local DB Updated", Toast.LENGTH_SHORT);
-
     }
 }
 
