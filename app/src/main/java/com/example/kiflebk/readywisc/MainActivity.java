@@ -3,8 +3,9 @@ package com.example.kiflebk.readywisc;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,8 +18,9 @@ import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
 
-    private MyDatabaseHelper mDatabaseHelper;
-    private Button DisplayButton, UpdateButton;
+    private static MyDatabaseHelper mDatabaseHelper;
+    private Button DisplayButton, UpdateButton, getDBButton;
+    static Context ctx;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,23 +29,26 @@ public class MainActivity extends ActionBarActivity {
         mDatabaseHelper = new MyDatabaseHelper(this);
         UpdateButton = (Button) findViewById(R.id.UpdateButton);
         DisplayButton = (Button) findViewById(R.id.DisplayButton);
+        getDBButton = (Button) findViewById(R.id.getDBButton);
         final EditText name = (EditText) findViewById(R.id.editText);
         final EditText email = (EditText) findViewById(R.id.editText2);
 
-        final Context ctx = this;
+        ctx = this;
 
         addUser(null, null, 0);
 
         UpdateButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {  // put your info into the DB
+            public void onClick(View v) {
                 String nameData = name.getText().toString();
                 String emailData = email.getText().toString();
                 addUser(nameData, emailData, 0);
+                name.setText("");
+                email.setText("");
             }
         });
 
-        DisplayButton.setOnClickListener(new View.OnClickListener() { // Display info from the DB
+        DisplayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Cursor c = mDatabaseHelper.query(MyDatabaseHelper.TABLE_USERS, MyDatabaseHelper.COL_NAME);
@@ -60,10 +65,29 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
+        //click listener for the new button to update from the web database
+        getDBButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //this string can be dynamically allocated later, I hardcoded just for the proof of concept
+                //String[][] webNames = new String[3][3];
+
+                /*new runnable object used to pull the data from the web.
+                android will only let you do json calls from a thread other
+                than the main
+                 */
+
+                DBUpdateFromWeb foo = new DBUpdateFromWeb();
+                Thread t = new Thread(foo);
+                t.start();
+                Toast.makeText(ctx, "Local DB Updated", Toast.LENGTH_SHORT);
+            }
+        });
     }
 
 
-    private void addUser(String name, String email, long dateOfBirthMillis) {   // Adds user to the actual DB, using myDBhelper
+    protected static void addUser(String name, String email, long dateOfBirthMillis) {
 
         ContentValues values = new ContentValues();
 
@@ -87,7 +111,7 @@ public class MainActivity extends ActionBarActivity {
 
         } catch (MyDatabaseHelper.NotValidException e) {
 
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.e("DB Error:", "Unable to insert into DB.");
 
         }
 
