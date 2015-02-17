@@ -1,6 +1,7 @@
 package com.example.kiflebk.readywisc;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -99,6 +100,9 @@ public class DBUpdateFromWeb implements Runnable{
         } catch (ParseException e1) {
             e1.printStackTrace();
         }
+
+        Toast.makeText(MainActivity.ctx, "Local DB Updated", Toast.LENGTH_SHORT);
+
     }
 }
 

@@ -19,6 +19,7 @@ public class MainActivity extends ActionBarActivity {
 
     private static MyDatabaseHelper mDatabaseHelper;
     private Button DisplayButton, UpdateButton, getDBButton;
+    static Context ctx;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +32,7 @@ public class MainActivity extends ActionBarActivity {
         final EditText name = (EditText) findViewById(R.id.editText);
         final EditText email = (EditText) findViewById(R.id.editText2);
 
-        final Context ctx = this;
+        ctx = this;
 
         addUser(null, null, 0);
 
@@ -41,6 +42,8 @@ public class MainActivity extends ActionBarActivity {
                 String nameData = name.getText().toString();
                 String emailData = email.getText().toString();
                 addUser(nameData, emailData, 0);
+                name.setText("");
+                email.setText("");
             }
         });
 
