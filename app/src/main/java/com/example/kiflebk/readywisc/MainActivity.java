@@ -70,7 +70,7 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View v) {
 
                 //this string can be dynamically allocated later, I hardcoded just for the proof of concept
-                String[][] webNames = new String[3][3];
+                //String[][] webNames = new String[3][3];
 
                 /*new runnable object used to pull the data from the web.
                 android will only let you do json calls from a thread other
