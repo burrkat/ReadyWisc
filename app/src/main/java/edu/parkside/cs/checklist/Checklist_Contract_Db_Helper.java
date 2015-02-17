@@ -242,15 +242,29 @@ public class Checklist_Contract_Db_Helper extends SQLiteOpenHelper {
         return rowList;
     }
 
-    public int updateItem(Checklist_Item_Row item, String description){
+    public int insertItem(Checklist_Row checklist, Checklist_Item_Row item, String description){
         SQLiteDatabase database = getWritableDatabase();
 
-        String [] queries = Checklist_Contract.Checklist_Item_Queries.updateItemWithItem(item, description);
+        String [] queries = Checklist_Contract.Checklist_Item_Queries.insertRow(checklist, item, description);
 
         for (int i = 0; i < queries.length; i++) {
             database.rawQuery(queries[i], null);
         }
 
+        // Return condition constant...
+        return SUCCESS;
+    }
+
+    public int updateItem(Checklist_Item_Row item, String description){
+        SQLiteDatabase database = getWritableDatabase();
+
+        String [] queries = Checklist_Contract.Checklist_Item_Queries.updateItem(item, description);
+
+        for (int i = 0; i < queries.length; i++) {
+            database.rawQuery(queries[i], null);
+        }
+
+        // Return condition constant...
         return SUCCESS;
     }
 

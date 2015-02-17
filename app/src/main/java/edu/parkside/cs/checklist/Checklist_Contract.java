@@ -47,7 +47,7 @@ public final class Checklist_Contract {
         public static final String ALL_ITEMS = "SELECT * FROM " +
                 Item.TABLE_NAME;
 
-        public static final String[] updateItemWithItem(Checklist_Item_Row item, String description){
+        public static final String[] updateItem(Checklist_Item_Row item, String description){
             String itemPropertiesQuery = "UPDATE " + Item.TABLE_NAME +
                     " SET " + Item.COLUMN_NAME_NAME + " = " + item.getName() + ", " +
                     Item.COLUMN_NAME_QTY + " = " + item.getQty() + " WHERE " +
@@ -60,6 +60,23 @@ public final class Checklist_Contract {
 
             String [] queries = {itemPropertiesQuery, descriptionQuery};
 
+            return queries;
+        }
+
+        public static final String[] insertRow(Checklist_Row checklist, Checklist_Item_Row item, String description){
+            String query_0 = "INSERT INTO " + Item.TABLE_NAME + " (" +
+                    Item.COLUMN_NAME_NAME + ", " + Item.COLUMN_NAME_QTY +
+                    ", " + Item.COLUMN_NAME_COMPLETE + ", " +
+                    Item.COLUMN_NAME_CHECKLIST_ID + ") VALUES (" +
+                    item.getName() + ", " + item.getQty() + ", " +
+                    item.getChecked() + ", " + checklist.getEntryid() + ")";
+
+             String query_1 = "INSERT INTO " + Description.TABLE_NAME + " (" +
+                     Description.COLUMN_NAME_DESCRIPTION + ", " +
+                     Description.COLUMN_NAME_ITEM_ID + ") VALUES (" +
+                     description + ", " + item.getEntryid() + ")";
+
+            String [] queries = {query_0, query_1};
             return queries;
         }
     }
