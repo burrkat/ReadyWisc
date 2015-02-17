@@ -11,7 +11,7 @@ import android.widget.EditText;
 import com.example.kiflebk.readywisc.R;
 
 public class Checklist_Item_Create extends ActionBarActivity {
-    Checklist_Row checklist_row;
+    Checklist_Item_Row checklist_item_row;
     boolean editTextHasBeenEdited;
 
     @Override
@@ -19,7 +19,7 @@ public class Checklist_Item_Create extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checklist_item_create);
 
-        checklist_row = getIntent().getParcelableExtra(Checklist.EXTRA_MESSAGE);
+        checklist_item_row = getIntent().getParcelableExtra(Checklist_Item_ListView.EXTRA_MESSAGE);
         ((Button)findViewById(R.id.activity_checklist_item_create_save_button)).setEnabled(false);
     }
 
@@ -46,6 +46,32 @@ public class Checklist_Item_Create extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // The activity is about to become visible.
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // The activity has become visible (it is now "resumed").
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Another activity is taking focus (this activity is about to be "paused").
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // The activity is no longer visible (it is now "stopped")
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // The activity is about to be destroyed.
+    }
+
     public void saveButtonPressed(View view){
         // Retrieve input values from editText fields.
         EditText name = (EditText)findViewById(R.id.activity_checklist_item_create_name_edittext);
@@ -54,11 +80,11 @@ public class Checklist_Item_Create extends ActionBarActivity {
 
         // Create item from editText fields.
         Checklist_Item_Row item = new Checklist_Item_Row();
-        item.setName(name.toString());
-        item.setQty(new Integer(qty.toString()).intValue());
+        item.setName(name.getText().toString());
+        item.setQty(new Integer(qty.getText().toString()).intValue());
 
 
-        int status = Checklist_Contract_Db_Helper.getDb_helper(this).insertItem(checklist_row, item, description.toString());
+        int status = Checklist_Contract_Db_Helper.getDb_helper(this).insertItem(item, description.toString());
         // Check status and update user.
         // If successful return to previous activity.
         if (status == Checklist_Contract_Db_Helper.SUCCESS)

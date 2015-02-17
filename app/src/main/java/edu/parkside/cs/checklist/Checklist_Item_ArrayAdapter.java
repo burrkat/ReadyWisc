@@ -62,9 +62,18 @@ public class Checklist_Item_ArrayAdapter extends ArrayAdapter<Checklist_Item_Row
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, Checklist_Item_Detail.class);
-                intent.putExtra(Checklist_Item_ListView.EXTRA_MESSAGE, checklist_item_rowArrayList.get(position));
-                context.startActivity(intent);
+
+                if (checklist_item_rowArrayList.get(position).getName().contains("Add Item")){
+                    Intent intent = new Intent(context, Checklist_Item_Create.class);
+                    intent.putExtra(Checklist_Item_ListView.EXTRA_MESSAGE,checklist_item_rowArrayList.get(position));
+                    context.startActivity(intent);
+                }
+                else {
+                    Intent intent = new Intent(context, Checklist_Item_Detail.class);
+                    intent.putExtra(Checklist_Item_ListView.EXTRA_MESSAGE, checklist_item_rowArrayList.get(position));
+                    context.startActivity(intent);
+                }
+
             }
         });
 

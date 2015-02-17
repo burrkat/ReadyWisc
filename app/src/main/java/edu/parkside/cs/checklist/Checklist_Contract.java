@@ -41,6 +41,19 @@ public final class Checklist_Contract {
     public static abstract class Checklist_Queries{
         public static final String ALL_ITEMS = "SELECT * FROM " +
                 Checklist.TABLE_NAME;
+
+        public static final String insertChecklistIntoDatabase(Checklist_Row checklist_row)
+        {
+            /*
+            * INSERT INTO TABLE_NAME (column1, column2, column3,...columnN)]
+            * VALUES (value1, value2, value3,...valueN);
+             */
+            String query = "INSERT INTO " + Checklist.TABLE_NAME +
+                    " VALUES (NULL, " + "\'" + checklist_row.getTitle() + "\'" + ", " + "\'" +
+                    checklist_row.getProgress() + "\'" + ")";
+
+            return query;
+        }
     }
 
     public static abstract class Checklist_Item_Queries{
@@ -63,13 +76,13 @@ public final class Checklist_Contract {
             return queries;
         }
 
-        public static final String[] insertRow(Checklist_Row checklist, Checklist_Item_Row item, String description){
+        public static final String[] insertRow(Checklist_Item_Row item, String description){
             String query_0 = "INSERT INTO " + Item.TABLE_NAME + " (" +
                     Item.COLUMN_NAME_NAME + ", " + Item.COLUMN_NAME_QTY +
                     ", " + Item.COLUMN_NAME_COMPLETE + ", " +
                     Item.COLUMN_NAME_CHECKLIST_ID + ") VALUES (" +
                     item.getName() + ", " + item.getQty() + ", " +
-                    item.getChecked() + ", " + checklist.getEntryid() + ")";
+                    item.getChecked() + ", " + item.getChecklist_entryid() + ")";
 
              String query_1 = "INSERT INTO " + Description.TABLE_NAME + " (" +
                      Description.COLUMN_NAME_DESCRIPTION + ", " +

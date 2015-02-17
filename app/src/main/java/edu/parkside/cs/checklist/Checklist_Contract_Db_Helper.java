@@ -1,6 +1,5 @@
 package edu.parkside.cs.checklist;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseErrorHandler;
@@ -185,7 +184,8 @@ public class Checklist_Contract_Db_Helper extends SQLiteOpenHelper {
                     rowList.add(checklist_row);
                 } while (cursor.moveToNext());
             } else {
-                rowList.add(new Checklist_Row("Empty", 0));
+                rowList.add(new Checklist_Row("Empty", 50));
+                rowList.add(new Checklist_Row("Add Checklist", 0));
             }
         }
 
@@ -193,14 +193,11 @@ public class Checklist_Contract_Db_Helper extends SQLiteOpenHelper {
         return rowList;
     }
 
-    public static void addChecklist(Checklist_Row checklist_row, Context context){
-        ContentValues contentValues = new ContentValues();
+    public void addChecklist(Checklist_Row checklist_row){
+        SQLiteDatabase database = this.getWritableDatabase();
 
-        contentValues.put(Checklist_Contract.Checklist.COLUMN_NAME_TITLE, checklist_row.getTitle());
-        contentValues.put(Checklist_Contract.Checklist.COLUMN_NAME_PROGRESS, checklist_row.getProgress());
+        database.execSQL(Checklist_Contract.Checklist_Queries.insertChecklistIntoDatabase(checklist_row), null);
 
-        SQLiteDatabase database = Checklist_Contract_Db_Helper.getDb_helper(context).getWritableDatabase();
-        database.insert(Checklist_Contract.Checklist.TABLE_NAME, null, contentValues);
         database.close();
     }
 
@@ -235,6 +232,7 @@ public class Checklist_Contract_Db_Helper extends SQLiteOpenHelper {
                 } while (cursor.moveToNext());
             } else {
                 rowList.add(new Checklist_Item_Row());
+                rowList.add(new Checklist_Item_Row("Add Item", false));
             }
         }
 
@@ -242,10 +240,10 @@ public class Checklist_Contract_Db_Helper extends SQLiteOpenHelper {
         return rowList;
     }
 
-    public int insertItem(Checklist_Row checklist, Checklist_Item_Row item, String description){
+    public int insertItem(Checklist_Item_Row item, String description){
         SQLiteDatabase database = getWritableDatabase();
 
-        String [] queries = Checklist_Contract.Checklist_Item_Queries.insertRow(checklist, item, description);
+        String [] queries = Checklist_Contract.Checklist_Item_Queries.insertRow(item, description);
 
         for (int i = 0; i < queries.length; i++) {
             database.rawQuery(queries[i], null);
@@ -261,7 +259,7 @@ public class Checklist_Contract_Db_Helper extends SQLiteOpenHelper {
         String [] queries = Checklist_Contract.Checklist_Item_Queries.updateItem(item, description);
 
         for (int i = 0; i < queries.length; i++) {
-            database.rawQuery(queries[i], null);
+            database.execSQL(queries[i]);
         }
 
         // Return condition constant...

@@ -39,6 +39,9 @@ public class Checklist extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checklist);
 
+        // Just for demo...
+        PopulateDB populateDB = new PopulateDB(this);
+
         // Populate the listView with the contents of the Checklist table.
         new Runnable() {
             @Override
@@ -80,6 +83,16 @@ public class Checklist extends ActionBarActivity {
     protected void onResume() {
         super.onResume();
         // The activity has become visible (it is now "resumed").
+
+        getArrayAdapter().clear();
+        // Populate the listView with the contents of the Checklist table.
+        // Possible new checklists have been added.
+        new Runnable() {
+            @Override
+            public void run() {
+                populateListView();
+            }
+        }.run();
     }
     @Override
     protected void onPause() {

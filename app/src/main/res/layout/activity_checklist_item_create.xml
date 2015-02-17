@@ -51,7 +51,8 @@
         android:layout_toRightOf="@+id/activity_checklist_item_create_qty_textview"
         android:layout_alignRight="@+id/activity_checklist_item_create_name_edittext"
         android:layout_alignEnd="@+id/activity_checklist_item_create_name_edittext"
-        android:onClick="editTextViewHasBeenSelected" />
+        android:onClick="editTextViewHasBeenSelected"
+        android:numeric="integer" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -76,7 +77,8 @@
         android:layout_alignRight="@+id/activity_checklist_item_create_save_button"
         android:layout_alignEnd="@+id/activity_checklist_item_create_save_button"
         android:layout_below="@+id/activity_checklist_item_create_description_textview"
-        android:onClick="editTextViewHasBeenSelected" />
+        android:onClick="editTextViewHasBeenSelected"
+        android:gravity="left|top" />
 
     <Button
         android:layout_width="wrap_content"

@@ -38,7 +38,7 @@ public class Checklist_ArrayAdapter extends ArrayAdapter {
 
     @Override
     public View getView(final int position, final View convertView, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) context
+        final LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         View rowView = inflater.inflate(R.layout.activity_checklist_row, parent, false);
@@ -52,9 +52,15 @@ public class Checklist_ArrayAdapter extends ArrayAdapter {
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, Checklist_Item_ListView.class);
-                intent.putExtra(Checklist.EXTRA_MESSAGE, list.get(position));
-                context.startActivity(intent);
+                if (list.get(position).getTitle().contains("Add Checklist")){
+                    Intent intent = new Intent(context, Checklist_Create.class);
+                    context.startActivity(intent);
+                }
+                else {
+                    Intent intent = new Intent(context, Checklist_Item_ListView.class);
+                    intent.putExtra(Checklist.EXTRA_MESSAGE, list.get(position));
+                    context.startActivity(intent);
+                }
             }
         });
 

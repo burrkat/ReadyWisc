@@ -73,6 +73,41 @@ public class Checklist_Item_ListView extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // The activity is about to become visible.
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // The activity has become visible (it is now "resumed").
+
+        getChecklist_item_arrayAdapter().clear();
+        // Repopulate the listView with the contents of the Checklist table.
+        new Runnable() {
+            @Override
+            public void run() {
+                populateListView();
+            }
+        }.run();
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Another activity is taking focus (this activity is about to be "paused").
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // The activity is no longer visible (it is now "stopped")
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // The activity is about to be destroyed.
+    }
+
     public void populateListView()
     {
         ArrayList<Checklist_Item_Row> rowArrayList = Checklist_Contract_Db_Helper.getDb_helper(this).returnChecklistItemRows(null);

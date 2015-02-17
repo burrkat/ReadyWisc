@@ -52,6 +52,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="edu.parkside.cs.checklist.Checklist" />
         </activity>
+        <activity
+            android:name="edu.parkside.cs.checklist.Checklist_Create_Item_Add"
+            android:label="@string/title_activity_checklist__create__item__add"
+            android:parentActivityName="edu.parkside.cs.checklist.Checklist_Create" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="edu.parkside.cs.checklist.Checklist_Create" />
+        </activity>
     </application>
 
 </manifest>

@@ -11,5 +11,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/checklist_listview"
         android:layout_alignParentTop="true"
-        android:choiceMode="singleChoice" />
+        android:choiceMode="singleChoice"
+        android:layout_alignParentBottom="true" />
 </RelativeLayout>

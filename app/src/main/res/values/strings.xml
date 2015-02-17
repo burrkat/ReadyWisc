@@ -29,5 +29,6 @@
     <string name="checklist_item_listview_row_textview">Empty</string>
     <string name="activity_checklist_row_textview">Empty</string>
     <string name="activity_checklist_create_row_textview">Empty</string>
+    <string name="title_activity_checklist__create__item__add">Checklist_Create_Item_Add</string>
 
 </resources>
