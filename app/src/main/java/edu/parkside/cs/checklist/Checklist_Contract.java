@@ -46,5 +46,30 @@ public final class Checklist_Contract {
     public static abstract class Checklist_Item_Queries{
         public static final String ALL_ITEMS = "SELECT * FROM " +
                 Item.TABLE_NAME;
+
+        public static final String[] updateItemWithItem(Checklist_Item_Row item, String description){
+            String itemPropertiesQuery = "UPDATE " + Item.TABLE_NAME +
+                    " SET " + Item.COLUMN_NAME_NAME + " = " + item.getName() + ", " +
+                    Item.COLUMN_NAME_QTY + " = " + item.getQty() + " WHERE " +
+                    Item.COLUMN_NAME_ENTRY_ID + " = " + item.getEntryid();
+
+            String descriptionQuery = "UPDATE " + Description.TABLE_NAME +
+                    " SET " + Description.COLUMN_NAME_DESCRIPTION + " = " +
+                    description + " WHERE " + Description.COLUMN_NAME_ENTRY_ID +
+                    " = " + item.getEntryid();
+
+            String [] queries = {itemPropertiesQuery, descriptionQuery};
+
+            return queries;
+        }
+    }
+
+    public static abstract class Checklist_Description_Qureries{
+        public static final String getDescriptionWithItemEntryID(int entryID){
+            String queryString = "SELECT description FROM " +
+                    Description.TABLE_NAME + " WHERE item_entryid = " +
+                    entryID;
+            return queryString;
+        }
     }
 }

@@ -16,6 +16,8 @@ public class Checklist_Contract_Db_Helper extends SQLiteOpenHelper {
 
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "ChecklistContract.db";
+    public static final int SUCCESS = 0;
+    public static final int FAILURE = 1;
     public static Checklist_Contract_Db_Helper db_helper;
 
     /**
@@ -238,6 +240,41 @@ public class Checklist_Contract_Db_Helper extends SQLiteOpenHelper {
 
         database.close();
         return rowList;
+    }
+
+    public int updateItem(Checklist_Item_Row item, String description){
+        SQLiteDatabase database = getWritableDatabase();
+
+        String [] queries = Checklist_Contract.Checklist_Item_Queries.updateItemWithItem(item, description);
+
+        for (int i = 0; i < queries.length; i++) {
+            database.rawQuery(queries[i], null);
+        }
+
+        return SUCCESS;
+    }
+
+    public String returnDescriptionFromItem(Checklist_Item_Row item){
+        String descriptionText;
+        Cursor cursor;
+
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        cursor = database.rawQuery(Checklist_Contract.Checklist_Description_Qureries.getDescriptionWithItemEntryID(item.getEntryid()), null);
+
+        if (cursor.moveToFirst()){
+            cursor.moveToFirst();
+            do{
+                int descriptionIndex = cursor.getColumnIndex(Checklist_Contract.Description.COLUMN_NAME_DESCRIPTION);
+
+                descriptionText = cursor.getString(descriptionIndex);
+            }while (cursor.moveToNext());
+        }
+        else
+            descriptionText = "Empty";
+
+        database.close();
+        return descriptionText;
     }
 
 }

@@ -1,18 +1,35 @@
 package edu.parkside.cs.checklist;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.example.kiflebk.readywisc.R;
 
 public class Checklist_Item_Detail extends ActionBarActivity {
 
+    Checklist_Item_Row passedItem;
+    boolean editTextHasBeenEdited;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checklist_item_detail);
+
+        ((Button)findViewById(R.id.activity_checklist_item_detail_update_button)).setEnabled(false);
+
+        passedItem = this.getIntent().getParcelableExtra(Checklist_Item_ListView.EXTRA_MESSAGE);
+
+        new Runnable() {
+            @Override
+            public void run() {
+                populateWidgets();
+            }
+        }.run();
     }
 
 
@@ -36,5 +53,46 @@ public class Checklist_Item_Detail extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void populateWidgets(){
+
+        new Runnable() {
+            @Override
+            public void run() {
+                populateDescriptionTextField();
+            }
+        }.run();
+
+        EditText nameTextField = (EditText)findViewById(R.id.activity_checklist_item_detail_name_edittext);
+        EditText qtyTextField = (EditText)findViewById(R.id.activity_checklist_item_detail_qty_edittext);
+
+        nameTextField.setText(passedItem.getName());
+        qtyTextField.setText("" + passedItem.getQty());
+    }
+
+    private void populateDescriptionTextField(){
+        EditText descriptionTextField = (EditText)findViewById(R.id.activity_checklist_item_detail_decription_edittext);
+        descriptionTextField.setText(Checklist_Contract_Db_Helper.getDb_helper(this).returnDescriptionFromItem(passedItem));
+    }
+
+    public void updateButtonPressed(View view){
+        int status = Checklist_Contract_Db_Helper.getDb_helper(this).updateItem(passedItem,
+                ((EditText)findViewById(R.id.activity_checklist_item_detail_decription_edittext)).toString());
+        // Check status and update user.
+        // If successful return to previous activity.
+        finish();
+    }
+
+    public void cancelButtonPressed(View view){
+        finish();
+    }
+
+    public void editTextViewHasBeenSelected(View view){
+        if (editTextHasBeenEdited == false)
+        {
+            ((Button)findViewById(R.id.activity_checklist_item_detail_update_button)).setEnabled(true);
+            editTextHasBeenEdited = true;
+        }
     }
 }
