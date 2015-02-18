@@ -58,9 +58,9 @@ public class Checklist_Contract_Db_Helper extends SQLiteOpenHelper {
 
     public static Checklist_Contract_Db_Helper getDb_helper(Context context)
     {
-        if (db_helper == null){
-            db_helper = new Checklist_Contract_Db_Helper(context, null, null, Checklist_Contract.DATABASE_VERSION);
-        }
+
+        db_helper = new Checklist_Contract_Db_Helper(context, DATABASE_NAME, null, DATABASE_VERSION);
+
         return db_helper;
     }
 
@@ -129,7 +129,7 @@ public class Checklist_Contract_Db_Helper extends SQLiteOpenHelper {
     private void createChecklistTable(SQLiteDatabase database){
 
         String CREATE_CHECKLIST_TABLE = "CREATE TABLE " + Checklist_Contract.Checklist.TABLE_NAME +
-                "(" + Checklist_Contract.Checklist.COLUMN_NAME_ENTRY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "(" + Checklist_Contract.Checklist._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 Checklist_Contract.Checklist.COLUMN_NAME_TITLE + " TEXT, " +
                 Checklist_Contract.Checklist.COLUMN_NAME_PROGRESS + " INTEGER)";
 
@@ -139,7 +139,7 @@ public class Checklist_Contract_Db_Helper extends SQLiteOpenHelper {
     private void createItemTable(SQLiteDatabase database){
 
         String CREATE_ITEM_TABLE = "CREATE TABLE " + Checklist_Contract.Item.TABLE_NAME +
-                "(" + Checklist_Contract.Item.COLUMN_NAME_ENTRY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "(" + Checklist_Contract.Item._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 Checklist_Contract.Item.COLUMN_NAME_NAME + " TEXT, " +
                 Checklist_Contract.Item.COLUMN_NAME_QTY + " INTEGER, " +
                 Checklist_Contract.Item.COLUMN_NAME_COMPLETE + " INTEGER, " +
@@ -151,7 +151,7 @@ public class Checklist_Contract_Db_Helper extends SQLiteOpenHelper {
     private void createDescriptionTable(SQLiteDatabase database){
 
         String CREATE_DESCRIPTION_TABLE = "CREATE TABLE " + Checklist_Contract.Description.TABLE_NAME +
-                "(" + Checklist_Contract.Description.COLUMN_NAME_ENTRY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "(" + Checklist_Contract.Description._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 Checklist_Contract.Description.COLUMN_NAME_DESCRIPTION + " TEXT, " +
                 Checklist_Contract.Description.COLUMN_NAME_ITEM_ID + " NUMBER)";
 
@@ -169,11 +169,12 @@ public class Checklist_Contract_Db_Helper extends SQLiteOpenHelper {
         {
             cursor = database.rawQuery(Checklist_Contract.Checklist_Queries.ALL_ITEMS, null);
 
+
             if (cursor.moveToFirst()) {
                 cursor.moveToFirst();
                 do {
                     Checklist_Row checklist_row = new Checklist_Row();
-                    int entryid_index = cursor.getColumnIndex((Checklist_Contract.Checklist.COLUMN_NAME_ENTRY_ID));
+                    int entryid_index = cursor.getColumnIndex((Checklist_Contract.Checklist._ID));
                     int titleIndex = cursor.getColumnIndex(Checklist_Contract.Checklist.COLUMN_NAME_TITLE);
                     int progressIndex = cursor.getColumnIndex(Checklist_Contract.Checklist.COLUMN_NAME_PROGRESS);
 
@@ -185,8 +186,8 @@ public class Checklist_Contract_Db_Helper extends SQLiteOpenHelper {
                 } while (cursor.moveToNext());
             } else {
                 rowList.add(new Checklist_Row("Empty", 50));
-                rowList.add(new Checklist_Row("Add Checklist", 0));
             }
+            rowList.add(new Checklist_Row("Add Checklist", 0));
         }
 
         database.close();
@@ -196,9 +197,10 @@ public class Checklist_Contract_Db_Helper extends SQLiteOpenHelper {
     public void addChecklist(Checklist_Row checklist_row){
         SQLiteDatabase database = this.getWritableDatabase();
 
-        database.execSQL(Checklist_Contract.Checklist_Queries.insertChecklistIntoDatabase(checklist_row), null);
+        database.execSQL(Checklist_Contract.Checklist_Queries.insertChecklistIntoDatabase(checklist_row));
 
         database.close();
+
     }
 
     public ArrayList<Checklist_Item_Row> returnChecklistItemRows(String[] args){
@@ -216,7 +218,7 @@ public class Checklist_Contract_Db_Helper extends SQLiteOpenHelper {
                 cursor.moveToFirst();
                 do {
                     Checklist_Item_Row checklist_item_row = new Checklist_Item_Row();
-                    int entryid_index = cursor.getColumnIndex(Checklist_Contract.Item.COLUMN_NAME_ENTRY_ID);
+                    int entryid_index = cursor.getColumnIndex(Checklist_Contract.Item._ID);
                     int nameIndex = cursor.getColumnIndex(Checklist_Contract.Item.COLUMN_NAME_NAME);
                     int qtyIndex = cursor.getColumnIndex(Checklist_Contract.Item.COLUMN_NAME_QTY);
                     int isCheckedIndex = cursor.getColumnIndex(Checklist_Contract.Item.COLUMN_NAME_COMPLETE);

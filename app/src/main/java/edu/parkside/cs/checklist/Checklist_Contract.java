@@ -15,7 +15,6 @@ public final class Checklist_Contract {
     /* Inner class that defines the table contents */
     public static abstract class Checklist implements BaseColumns {
         public static final String TABLE_NAME = "checklist";
-        public static final String COLUMN_NAME_ENTRY_ID = "entryid";
         public static final String COLUMN_NAME_TITLE = "title";
         public static final String COLUMN_NAME_PROGRESS = "progress";
     }
@@ -23,7 +22,6 @@ public final class Checklist_Contract {
     /* Inner class that defines the table contents */
     public static abstract class Item implements BaseColumns {
         public static final String TABLE_NAME = "item";
-        public static final String COLUMN_NAME_ENTRY_ID = "entryid";
         public static final String COLUMN_NAME_NAME = "name";
         public static final String COLUMN_NAME_QTY = "qty";
         public static final String COLUMN_NAME_COMPLETE = "complete";
@@ -33,7 +31,6 @@ public final class Checklist_Contract {
     /* Inner class that defines the table contents */
     public static abstract class Description implements BaseColumns{
         public static final String TABLE_NAME = "description";
-        public static final String COLUMN_NAME_ENTRY_ID = "entryid";
         public static final String COLUMN_NAME_DESCRIPTION = "description";
         public static final String COLUMN_NAME_ITEM_ID = "item_entryid";
     }
@@ -54,6 +51,7 @@ public final class Checklist_Contract {
 
             return query;
         }
+
     }
 
     public static abstract class Checklist_Item_Queries{
@@ -64,11 +62,11 @@ public final class Checklist_Contract {
             String itemPropertiesQuery = "UPDATE " + Item.TABLE_NAME +
                     " SET " + Item.COLUMN_NAME_NAME + " = " + item.getName() + ", " +
                     Item.COLUMN_NAME_QTY + " = " + item.getQty() + " WHERE " +
-                    Item.COLUMN_NAME_ENTRY_ID + " = " + item.getEntryid();
+                    Item._ID + " = " + item.getEntryid();
 
             String descriptionQuery = "UPDATE " + Description.TABLE_NAME +
                     " SET " + Description.COLUMN_NAME_DESCRIPTION + " = " +
-                    description + " WHERE " + Description.COLUMN_NAME_ENTRY_ID +
+                    description + " WHERE " + Description._ID +
                     " = " + item.getEntryid();
 
             String [] queries = {itemPropertiesQuery, descriptionQuery};
