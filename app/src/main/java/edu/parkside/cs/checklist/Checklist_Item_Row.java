@@ -225,20 +225,65 @@ public class Checklist_Item_Row implements Parcelable {
         this.qty = qty;
     }
 
+
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *  Getter.
+     *
+     * @return
+     */
     public int getChecklist_entryid() {
         return checklist_entryid;
     }
 
+
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *  Setter.
+     *
+     *  @todo Verify input.
+     *
+     * @param checklist_entryid
+     */
     public void setChecklist_entryid(int checklist_entryid) {
         this.checklist_entryid = checklist_entryid;
     }
 
 
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *  Required method for the parcelable implementation.
+     *
+     * @return
+     */
     @Override
     public int describeContents() {
         return 0;
     }
 
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *  Translates the object attributes into parcel elements.
+     *
+     * @param dest
+     * @param flags
+     */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(getEntryid());
@@ -248,6 +293,16 @@ public class Checklist_Item_Row implements Parcelable {
         dest.writeInt(getChecklist_entryid());
     }
 
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *  Translates the parcel elements into object attributes.
+     *
+     * @param source
+     */
     private void readFromParcel(Parcel source){
         setEntryid(source.readInt());
         setName(source.readString());
@@ -256,6 +311,14 @@ public class Checklist_Item_Row implements Parcelable {
         setChecklist_entryid(source.readInt());
     }
 
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *  Required creator method for the parcelable implementation.
+     */
     public static final Parcelable.Creator<Checklist_Item_Row> CREATOR
             = new Parcelable.Creator<Checklist_Item_Row>() {
         public Checklist_Item_Row createFromParcel(Parcel in) {
