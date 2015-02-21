@@ -14,7 +14,12 @@ import com.example.kiflebk.readywisc.R;
 import java.util.ArrayList;
 
 /**
- * Created by krawchukd on 2/15/15.
+ * @author David Krawchuk
+ * @email krawchukdavid@gmail.com
+ * @date 02/20/2014
+ *
+ * Description:
+ *  Maps the activity_checklist.xml to the Checklist_Row objects.
  */
 public class Checklist_ArrayAdapter extends ArrayAdapter {
 

@@ -5,6 +5,14 @@ import android.view.View;
 
 import com.example.kiflebk.readywisc.R;
 
+/**
+ * @author David Krawchuk
+ * @email krawchukdavid@gmail.com
+ * @date 02/20/2014
+ *
+ * Description:
+ *  Class is meant to be used as a helper class to the Checklist Create Activity
+ */
 public class Checklist_Create_Item_Add extends Checklist_Item_Create {
 
     @Override

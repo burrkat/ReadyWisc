@@ -12,12 +12,25 @@ import java.util.ArrayList;
 
 public class Checklist_Item_ListView extends ActionBarActivity {
 
+    /* INSTANCE VARIABLE BLOCK BEGIN */
     public static final String EXTRA_MESSAGE = "edu.parkside.cs.checklist_item_listview";
 
     Checklist_Item_ArrayAdapter checklist_item_arrayAdapter;
     ListView checklist_item_listView;
     Checklist_Row passedChecklist;
+    boolean isInEditMode = false;
+    /* INSTANCE VARIABLE BLOCK END */
 
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *  Getter.
+     *
+     * @return
+     */
     private ListView getChecklist_item_listView(){
         if (checklist_item_listView == null)
         {
@@ -26,13 +39,36 @@ public class Checklist_Item_ListView extends ActionBarActivity {
         return checklist_item_listView;
     }
 
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *  Creates a new adapter if one doesn't exist and attaches it to the listview within the activity.
+     *
+     * @return
+     */
     private Checklist_Item_ArrayAdapter getChecklist_item_arrayAdapter(){
         if (checklist_item_arrayAdapter == null){
-            checklist_item_arrayAdapter = new Checklist_Item_ArrayAdapter(this, R.layout.activity_checklist_item_listview_row, new ArrayList<Checklist_Item_Row>());
+            checklist_item_arrayAdapter =
+                    new Checklist_Item_ArrayAdapter(this, R.layout.activity_checklist_item_listview_row, new ArrayList<Checklist_Item_Row>());
+
+            getChecklist_item_listView().setAdapter(checklist_item_arrayAdapter);
         }
         return checklist_item_arrayAdapter;
     }
 
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,14 +76,6 @@ public class Checklist_Item_ListView extends ActionBarActivity {
 
         // Retrieve the passed checklist.
         passedChecklist = getIntent().getParcelableExtra(Checklist.EXTRA_MESSAGE);
-
-        // Populate the listView with the contents of the Checklist table.
-        new Runnable() {
-            @Override
-            public void run() {
-                populateListView();
-            }
-        }.run();
     }
 
 
@@ -73,17 +101,35 @@ public class Checklist_Item_ListView extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *
+     */
     @Override
     protected void onStart() {
         super.onStart();
         // The activity is about to become visible.
+
+        // Populate the listView with the contents of the Checklist table.
+        new Runnable() {
+            @Override
+            public void run() {
+                populateListView();
+            }
+        }.run();
     }
+
     @Override
     protected void onResume() {
         super.onResume();
         // The activity has become visible (it is now "resumed").
 
         getChecklist_item_arrayAdapter().clear();
+
         // Repopulate the listView with the contents of the Checklist table.
         new Runnable() {
             @Override
@@ -108,12 +154,40 @@ public class Checklist_Item_ListView extends ActionBarActivity {
         // The activity is about to be destroyed.
     }
 
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *
+     */
     public void populateListView()
     {
-        ArrayList<Checklist_Item_Row> rowArrayList = Checklist_Contract_Db_Helper.getDb_helper(this).returnChecklistItemRows(null);
-        // Set the adapter to be used by the listView.
-        getChecklist_item_listView().setAdapter(getChecklist_item_arrayAdapter());
-        getChecklist_item_arrayAdapter().addAll(rowArrayList);
-        getChecklist_item_listView().requestLayout();
+        // Clear the adapter contents.
+        getChecklist_item_arrayAdapter().clear();
+
+        // Repopulate the adapter contents.
+        getChecklist_item_arrayAdapter().addAll(Checklist_Contract_Db_Helper.getDb_helper(this).returnChecklistItemRows(null));
+
+        // Notify clients that contents of the adapter have changed and they should update their state.
+        getChecklist_item_arrayAdapter().notifyDataSetChanged();
+    }
+
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *  When called changes the editMode boolean instance variable.
+     *
+     * @param menuItem
+     */
+    public void menuEditButtonPressed(MenuItem menuItem){
+        isInEditMode = (isInEditMode == true) ? false : true;
+
+        // Change the visual state of the application to indicate edit mode.
+
     }
 }

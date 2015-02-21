@@ -377,6 +377,8 @@ public class Checklist_Contract_Db_Helper extends SQLiteOpenHelper {
      *  Returns the description referenced in the item parameter. If an exception occurs a null value
      *   is returned.
      *
+     *   @todo Finish exception handling. Should return null if error occurs.
+     *
      * @param item
      * @return
      */

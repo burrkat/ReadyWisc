@@ -7,6 +7,14 @@ import android.view.MenuItem;
 
 import com.example.kiflebk.readywisc.R;
 
+/**
+ * @author David Krawchuk
+ * @email krawchukdavid@gmail.com
+ * @date 02/20/2014
+ *
+ * Description:
+ *  Class represents the Checklist creation activity.
+ */
 public class Checklist_Create extends ActionBarActivity {
 
     Checklist_Row checklist_row;
