@@ -40,7 +40,7 @@ public class Checklist extends ActionBarActivity {
         setContentView(R.layout.activity_checklist);
 
         // Just for demo...
-        PopulateDB populateDB = new PopulateDB(this);
+        //PopulateDB populateDB = new PopulateDB(this);
 
         // Populate the listView with the contents of the Checklist table.
         new Runnable() {

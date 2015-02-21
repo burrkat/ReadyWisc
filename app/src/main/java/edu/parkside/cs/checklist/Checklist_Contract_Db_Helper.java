@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ public class Checklist_Contract_Db_Helper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "ChecklistContract.db";
     public static final int SUCCESS = 0;
     public static final int FAILURE = 1;
-    public static Checklist_Contract_Db_Helper db_helper;
+    private static Checklist_Contract_Db_Helper db_helper;
 
     /**
      * Create a helper object to create, open, and/or manage a database.
@@ -56,17 +57,30 @@ public class Checklist_Contract_Db_Helper extends SQLiteOpenHelper {
         super(context, name, factory, version, errorHandler);
     }
 
+    /**
+     * Descrtiption :
+     *  Creates and returns a new instance of the databaseHelper even if one exists.
+     *
+     * @param context
+     * @return
+     */
     public static Checklist_Contract_Db_Helper getDb_helper(Context context)
     {
-
-        db_helper = new Checklist_Contract_Db_Helper(context, DATABASE_NAME, null, DATABASE_VERSION);
+        if (db_helper == null)
+            db_helper = new Checklist_Contract_Db_Helper(context, DATABASE_NAME, null, DATABASE_VERSION);
 
         return db_helper;
     }
 
+
     /**
-     * Called when the database is created for the first time. This is where the
-     * creation of tables and the initial population of the tables should happen.
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *  Called when the database is created for the first time. This is where the
+     *   creation of tables and the initial population of the tables should happen.
      *
      * @param db The database.
      */
@@ -124,85 +138,338 @@ public class Checklist_Contract_Db_Helper extends SQLiteOpenHelper {
     }
 
     /**
-     * Description: Called to create the inital Checklist Table.
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *  Creates the initial Checklist table.
+     *
+     * @param database
      */
     private void createChecklistTable(SQLiteDatabase database){
 
-        String CREATE_CHECKLIST_TABLE = "CREATE TABLE " + Checklist_Contract.Checklist.TABLE_NAME +
-                "(" + Checklist_Contract.Checklist._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                Checklist_Contract.Checklist.COLUMN_NAME_TITLE + " TEXT, " +
-                Checklist_Contract.Checklist.COLUMN_NAME_PROGRESS + " INTEGER)";
+        database.execSQL(Checklist_Contract.Checklist_Queries.CREATE_CHECKLIST_TABLE);
 
-        database.execSQL(CREATE_CHECKLIST_TABLE);
     }
 
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *  Called to create the initial Item Table.
+     *
+     * @param database
+     */
     private void createItemTable(SQLiteDatabase database){
 
-        String CREATE_ITEM_TABLE = "CREATE TABLE " + Checklist_Contract.Item.TABLE_NAME +
-                "(" + Checklist_Contract.Item._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                Checklist_Contract.Item.COLUMN_NAME_NAME + " TEXT, " +
-                Checklist_Contract.Item.COLUMN_NAME_QTY + " INTEGER, " +
-                Checklist_Contract.Item.COLUMN_NAME_COMPLETE + " INTEGER, " +
-                Checklist_Contract.Item.COLUMN_NAME_CHECKLIST_ID + " INTEGER )";
+        database.execSQL(Checklist_Contract.Checklist_Item_Queries.CREATE_ITEM_TABLE);
 
-        database.execSQL(CREATE_ITEM_TABLE);
     }
 
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *  Called to create the initial Checklist Table.
+     *
+     * @param database
+     */
     private void createDescriptionTable(SQLiteDatabase database){
 
-        String CREATE_DESCRIPTION_TABLE = "CREATE TABLE " + Checklist_Contract.Description.TABLE_NAME +
-                "(" + Checklist_Contract.Description._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                Checklist_Contract.Description.COLUMN_NAME_DESCRIPTION + " TEXT, " +
-                Checklist_Contract.Description.COLUMN_NAME_ITEM_ID + " NUMBER)";
+        database.execSQL(Checklist_Contract.Checklist_Description_Qureries.CREATE_DESCRIPTION_TABLE);
 
-        database.execSQL(CREATE_DESCRIPTION_TABLE);
     }
 
+    /* Checklist Block Begin */
+
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *  Populates the passed ArrayList with the contents of the cursor.
+     *   Note: Any changes to the Checklist Object and table must be reflected in this
+     *   method as well.
+     *
+     * @param cursor
+     * @param list
+     */
+    private void populateListWithChecklist(Cursor cursor, ArrayList<Checklist_Row> list){
+
+        if (cursor.moveToFirst()) {
+            cursor.moveToFirst();
+            do {
+                Checklist_Row checklist_row = new Checklist_Row();
+                int entryid_index = cursor.getColumnIndex((Checklist_Contract.Checklist._ID));
+                int titleIndex = cursor.getColumnIndex(Checklist_Contract.Checklist.COLUMN_NAME_TITLE);
+                int progressIndex = cursor.getColumnIndex(Checklist_Contract.Checklist.COLUMN_NAME_PROGRESS);
+
+                checklist_row.setEntryid(cursor.getInt(entryid_index));
+                checklist_row.setTitle(cursor.getString(titleIndex));
+                checklist_row.setProgress(cursor.getInt(progressIndex));
+
+                list.add(checklist_row);
+            } while (cursor.moveToNext());
+        }
+
+    }
+
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *  Takes an array of queries. If the input parameter is null, all results are returned.
+     *  Upon an sql exception, the method returns a null value.
+     *
+     * @param args
+     * @return
+     */
     public ArrayList<Checklist_Row> returnChecklistRows(String[] args){
 
         ArrayList<Checklist_Row> rowList = new ArrayList<Checklist_Row>();
         Cursor cursor;
-
         SQLiteDatabase database = this.getReadableDatabase();
 
-        if(args == null)
-        {
-            cursor = database.rawQuery(Checklist_Contract.Checklist_Queries.ALL_ITEMS, null);
+        try {
+            // Begin database interaction.
+            database.beginTransaction();
 
-
-            if (cursor.moveToFirst()) {
-                cursor.moveToFirst();
-                do {
-                    Checklist_Row checklist_row = new Checklist_Row();
-                    int entryid_index = cursor.getColumnIndex((Checklist_Contract.Checklist._ID));
-                    int titleIndex = cursor.getColumnIndex(Checklist_Contract.Checklist.COLUMN_NAME_TITLE);
-                    int progressIndex = cursor.getColumnIndex(Checklist_Contract.Checklist.COLUMN_NAME_PROGRESS);
-
-                    checklist_row.setEntryid(cursor.getInt(entryid_index));
-                    checklist_row.setTitle(cursor.getString(titleIndex));
-                    checklist_row.setProgress(cursor.getInt(progressIndex));
-
-                    rowList.add(checklist_row);
-                } while (cursor.moveToNext());
-            } else {
-                rowList.add(new Checklist_Row("Empty", 50));
+            if(args == null)
+            {
+                cursor = database.rawQuery(Checklist_Contract.Checklist_Queries.ALL_ITEMS, null);
+                populateListWithChecklist(cursor, rowList);
+                rowList.add(new Checklist_Row("Add Checklist", 0));
             }
-            rowList.add(new Checklist_Row("Add Checklist", 0));
-        }
+            else
+            {
+                for(String query : args)
+                {
+                    cursor = database.rawQuery(query, null);
+                    populateListWithChecklist(cursor, rowList);
+                }
+            }
 
-        database.close();
-        return rowList;
+            // End database interaction.
+            database.setTransactionSuccessful();
+            database.endTransaction();
+        }
+        catch (SQLiteException e)
+        {
+            rowList = null;
+        }
+        finally {
+            return rowList;
+        }
     }
 
-    public void addChecklist(Checklist_Row checklist_row){
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *  When passed a Checklist Row object inserts that object into the Checklist table.
+     *
+     * @param checklist_row
+     */
+    public int addChecklist(Checklist_Row checklist_row){
+
+        boolean transaction_success = true;
         SQLiteDatabase database = this.getWritableDatabase();
 
-        database.execSQL(Checklist_Contract.Checklist_Queries.insertChecklistIntoDatabase(checklist_row));
+        try {
+            database.beginTransaction();
+            database.execSQL(Checklist_Contract.Checklist_Queries.insertChecklist(checklist_row));
+            database.setTransactionSuccessful();
+            database.endTransaction();
+        }
+        catch (SQLiteException e)
+        {
+            transaction_success = false;
+        }
+        finally {
+            return (transaction_success == true) ? SUCCESS : FAILURE;
 
-        database.close();
+        }
+    }
+
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *  Updates the Checklist table with the values of the Checklist Row object. Upon completion
+     *  the method returns the status of the transaction.
+     *
+     * @param checklist_row
+     * @return
+     */
+    public int updateChecklist(Checklist_Row checklist_row){
+
+        boolean transaction_success = true;
+        SQLiteDatabase database = this.getWritableDatabase();
+
+        try{
+            database.beginTransaction();
+            database.execSQL(Checklist_Contract.Checklist_Queries.updateChecklist(checklist_row));
+            database.setTransactionSuccessful();
+            database.endTransaction();
+        }
+        catch (SQLiteException e){
+            transaction_success = false;
+        }
+        finally {
+            return (transaction_success == true) ? SUCCESS : FAILURE;
+        }
+    }
+
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *  Removes the provided checklist row from the Checklist table. Upon completion the method
+     *   returns the status of the transaction.
+     *
+     * @param checklist_row
+     * @return
+     */
+    public int deleteChecklist(Checklist_Row checklist_row){
+
+        boolean transaction_success = true;
+        SQLiteDatabase database = this.getWritableDatabase();
+
+        try {
+            database.beginTransaction();
+            database.execSQL(Checklist_Contract.Checklist_Queries.deleteChecklist(checklist_row));
+            database.setTransactionSuccessful();
+            database.endTransaction();
+        }
+        catch (SQLiteException e)
+        {
+            transaction_success = false;
+        }
+        finally {
+            return (transaction_success == true) ? SUCCESS : FAILURE;
+        }
+    }
+
+    /* Checklist Block End */
+
+    /* Checklist Item Block Begin */
+
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *  Returns the description referenced in the item parameter. If an exception occurs a null value
+     *   is returned.
+     *
+     * @param item
+     * @return
+     */
+    public String returnDescriptionFromItem(Checklist_Item_Row item){
+
+        String descriptionText = null;
+        Cursor cursor;
+        SQLiteDatabase database = this.getReadableDatabase();
+
+        try {
+            // Begin interaction with database.
+            database.beginTransaction();
+
+            cursor = database.rawQuery(Checklist_Contract.Checklist_Description_Qureries.getDescriptionWithItemEntryID(item.getEntryid()), null);
+
+            if (cursor.moveToFirst()){
+                cursor.moveToFirst();
+                do{
+                    int descriptionIndex = cursor.getColumnIndex(Checklist_Contract.Description.COLUMN_NAME_DESCRIPTION);
+
+                    descriptionText = cursor.getString(descriptionIndex);
+                }while (cursor.moveToNext());
+            }
+            else
+                descriptionText = "Empty";
+
+            // End interaction with the database.
+            database.setTransactionSuccessful();
+            database.endTransaction();
+        }
+        catch (SQLiteException e)
+        {
+
+        }
+        finally {
+            return  descriptionText;
+        }
 
     }
 
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *  Populates the passed ArrayList with the contents of the cursor.
+     *   Note: Any changes to the Checklist Item Object and table must be reflected in this
+     *   method as well.
+     *
+     * @param cursor
+     * @param rowList
+     */
+    public void populateListWithChecklistItemRow(Cursor cursor, ArrayList<Checklist_Item_Row> rowList)
+    {
+        if (cursor.moveToFirst()) {
+            cursor.moveToFirst();
+            do {
+                Checklist_Item_Row checklist_item_row = new Checklist_Item_Row();
+                /* Get the indexes of the columns within the cursor to reference, matching
+                 *  the Item table. Note if table column order changes this will not effect
+                 *  the method.
+                 */
+                int entryid_index = cursor.getColumnIndex(Checklist_Contract.Item._ID);
+                int nameIndex = cursor.getColumnIndex(Checklist_Contract.Item.COLUMN_NAME_NAME);
+                int qtyIndex = cursor.getColumnIndex(Checklist_Contract.Item.COLUMN_NAME_QTY);
+                int isCheckedIndex = cursor.getColumnIndex(Checklist_Contract.Item.COLUMN_NAME_COMPLETE);
+                int checklist_entry_index = cursor.getColumnIndex(Checklist_Contract.Item.COLUMN_NAME_CHECKLIST_ID);
+
+                checklist_item_row.setEntryid(cursor.getInt(entryid_index));
+                checklist_item_row.setName(cursor.getString(nameIndex));
+                checklist_item_row.setQty(cursor.getInt(qtyIndex));
+                checklist_item_row.setChecked(cursor.getInt(isCheckedIndex));
+                checklist_item_row.setChecklist_entryid(cursor.getInt(checklist_entry_index));
+
+                rowList.add(checklist_item_row);
+            } while (cursor.moveToNext());
+        }
+    }
+
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *  Returns an array list of Checklist_Item_Rows. If the args parameter is null, all items of
+     *   a Checklist are return. Given an array of query strings the method returns an ArrayList of
+     *   the combined queries.
+     *
+     * @param args
+     * @return
+     */
     public ArrayList<Checklist_Item_Row> returnChecklistItemRows(String[] args){
 
         ArrayList<Checklist_Item_Row> rowList = new ArrayList<Checklist_Item_Row>();
@@ -210,85 +477,168 @@ public class Checklist_Contract_Db_Helper extends SQLiteOpenHelper {
 
         SQLiteDatabase database = this.getReadableDatabase();
 
+        // Begin interaction with database.
+        database.beginTransaction();
+
         if(args == null)
         {
             cursor = database.rawQuery(Checklist_Contract.Checklist_Item_Queries.ALL_ITEMS, null);
-
-            if (cursor.moveToFirst()) {
-                cursor.moveToFirst();
-                do {
-                    Checklist_Item_Row checklist_item_row = new Checklist_Item_Row();
-                    int entryid_index = cursor.getColumnIndex(Checklist_Contract.Item._ID);
-                    int nameIndex = cursor.getColumnIndex(Checklist_Contract.Item.COLUMN_NAME_NAME);
-                    int qtyIndex = cursor.getColumnIndex(Checklist_Contract.Item.COLUMN_NAME_QTY);
-                    int isCheckedIndex = cursor.getColumnIndex(Checklist_Contract.Item.COLUMN_NAME_COMPLETE);
-                    int checklist_entry_index = cursor.getColumnIndex(Checklist_Contract.Item.COLUMN_NAME_CHECKLIST_ID);
-
-                    checklist_item_row.setEntryid(cursor.getInt(entryid_index));
-                    checklist_item_row.setName(cursor.getString(nameIndex));
-                    checklist_item_row.setQty(cursor.getInt(qtyIndex));
-                    checklist_item_row.setChecked(cursor.getInt(isCheckedIndex));
-                    checklist_item_row.setChecklist_entryid(cursor.getInt(checklist_entry_index));
-
-                    rowList.add(checklist_item_row);
-                } while (cursor.moveToNext());
-            } else {
-                rowList.add(new Checklist_Item_Row());
-                rowList.add(new Checklist_Item_Row("Add Item", false));
+            populateListWithChecklistItemRow(cursor, rowList);
+            rowList.add(new Checklist_Item_Row("Add Item", false));
+        }
+        else
+        {
+            for(String query : args)
+            {
+                cursor = database.rawQuery(query, null);
+                populateListWithChecklistItemRow(cursor, rowList);
             }
         }
 
-        database.close();
+        // End interaction with database.
+        database.setTransactionSuccessful();
+        database.endTransaction();
+
         return rowList;
     }
 
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *  Inserts an item from a checklist into the Item table. Retrieves that newly inserted item
+     *   for use as a reference to insert the description into the description table. Upon completion
+     *   of the transaction the method returns the condition code.
+     *
+     * @param item
+     * @param description
+     * @return
+     */
     public int insertItem(Checklist_Item_Row item, String description){
-        SQLiteDatabase database = getWritableDatabase();
 
-        String [] queries = Checklist_Contract.Checklist_Item_Queries.insertRow(item, description);
+        boolean transaction_success = true;
 
-        for (int i = 0; i < queries.length; i++) {
-            database.rawQuery(queries[i], null);
+        try {
+            SQLiteDatabase database = getWritableDatabase();
+            String query;
+
+            // Begin interaction with database.
+            database.beginTransaction();
+
+            // Insert item into Item table.
+            query = Checklist_Contract.Checklist_Item_Queries.insertItem(item);
+            database.execSQL(query);
+
+            // Fetch updated item with valid attributes.
+            query = Checklist_Contract.Checklist_Item_Queries.fetchItem(item);
+            ArrayList<Checklist_Item_Row> updated_item =  returnChecklistItemRows(new String [] {query});
+
+            // Insert description into description table.
+            query = Checklist_Contract.Checklist_Description_Qureries.insertDescription(updated_item.remove(0), description);
+            database.execSQL(query);
+
+            // End database interaction.
+            database.setTransactionSuccessful();
+            database.endTransaction();
+        }
+        catch (SQLiteException e){
+            transaction_success = false;
+        }
+        finally {
+            // Return condition constant...
+            return (transaction_success == true) ? SUCCESS : FAILURE;
         }
 
-        // Return condition constant...
-        return SUCCESS;
     }
 
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *  Updates the item and its attributes in the Item table, as well as, the description table
+     *  and it's attributes. Upon completion of the transaction the method will return the
+     *  condition code.
+     *
+     * @param item
+     * @param description
+     * @return
+     */
     public int updateItem(Checklist_Item_Row item, String description){
+
+        boolean transaction_success = true;
+
         SQLiteDatabase database = getWritableDatabase();
+        String query;
 
-        String [] queries = Checklist_Contract.Checklist_Item_Queries.updateItem(item, description);
+        try {
 
-        for (int i = 0; i < queries.length; i++) {
-            database.execSQL(queries[i]);
+            // Begin interaction with the database.
+            database.beginTransaction();
+
+            // Update Item.
+            query = Checklist_Contract.Checklist_Item_Queries.updateItem(item, description);
+            database.execSQL(query);
+
+            // Update description item.
+            ArrayList<Checklist_Item_Row> updatedItem =
+                    returnChecklistItemRows(new String[]{Checklist_Contract.Checklist_Item_Queries.fetchItem(item)});
+            query = Checklist_Contract.Checklist_Description_Qureries.updateDescription(updatedItem.remove(0), description);
+            database.execSQL(query);
+
+            // End interaction with the database.
+            database.setTransactionSuccessful();
+            database.endTransaction();
         }
-
-        // Return condition constant...
-        return SUCCESS;
+        catch (SQLiteException e){
+            transaction_success = false;
+        }
+        finally {
+            // Return condition constant...
+            return (transaction_success == true) ? SUCCESS : FAILURE;
+        }
     }
 
-    public String returnDescriptionFromItem(Checklist_Item_Row item){
-        String descriptionText;
-        Cursor cursor;
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *  Deletes the item and its attributes in the Item table, as well as, the description table
+     *  and it's attributes. Upon completion of the transaction the method will return the
+     *  condition code.
+     *
+     * @param item
+     * @return
+     */
+    public int deleteItem(Checklist_Item_Row item){
+        boolean transaction_success = true;
 
-        SQLiteDatabase database = this.getReadableDatabase();
+        SQLiteDatabase database = this.getWritableDatabase();
 
-        cursor = database.rawQuery(Checklist_Contract.Checklist_Description_Qureries.getDescriptionWithItemEntryID(item.getEntryid()), null);
+        try{
+            // Begin database interaction.
+            database.beginTransaction();
 
-        if (cursor.moveToFirst()){
-            cursor.moveToFirst();
-            do{
-                int descriptionIndex = cursor.getColumnIndex(Checklist_Contract.Description.COLUMN_NAME_DESCRIPTION);
+            String query = Checklist_Contract.Checklist_Item_Queries.deleteItem(item);
+            database.execSQL(query);
 
-                descriptionText = cursor.getString(descriptionIndex);
-            }while (cursor.moveToNext());
+            // End database interaction.
+            database.setTransactionSuccessful();
+            database.endTransaction();
         }
-        else
-            descriptionText = "Empty";
-
-        database.close();
-        return descriptionText;
+        catch (SQLiteException e){
+            transaction_success = false;
+        }
+        finally {
+            return (transaction_success == true) ? SUCCESS : FAILURE;
+        }
     }
+
+    /* Checklist Item Block End */
 
 }

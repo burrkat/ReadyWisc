@@ -104,9 +104,7 @@ public class Checklist_Item_Detail extends ActionBarActivity {
 
     public void updateButtonPressed(View view){
         int status = Checklist_Contract_Db_Helper.getDb_helper(this).updateItem(passedItem,
-                ((EditText)findViewById(R.id.activity_checklist_item_detail_decription_edittext)).toString());
-        // Check status and update user.
-        // If successful return to previous activity.
+                ((EditText)findViewById(R.id.activity_checklist_item_detail_decription_edittext)).getText().toString());
         finish();
     }
 

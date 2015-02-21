@@ -84,7 +84,7 @@ public class Checklist_Item_Create extends ActionBarActivity {
         item.setQty(new Integer(qty.getText().toString()).intValue());
 
 
-        int status = Checklist_Contract_Db_Helper.getDb_helper(this).insertItem(item, description.toString());
+        int status = Checklist_Contract_Db_Helper.getDb_helper(this).insertItem(item, description.getText().toString());
         // Check status and update user.
         // If successful return to previous activity.
         if (status == Checklist_Contract_Db_Helper.SUCCESS)
