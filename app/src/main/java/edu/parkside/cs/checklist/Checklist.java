@@ -12,11 +12,23 @@ import java.util.ArrayList;
 
 public class Checklist extends ActionBarActivity {
 
+    /* INSTANCE VARIABLE BLOCK BEGIN */
     public final static String EXTRA_MESSAGE = "edu.parkside.cs.checklist.checklist";
+    private Checklist_ArrayAdapter arrayAdapter;
+    private ListView checklistListView;
+    protected boolean isInEditMode = false;
+    /* INSTANCE VARIABLE BLOCK END */
 
-    Checklist_ArrayAdapter arrayAdapter;
-    ListView checklistListView;
-
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *  Returns a valid listview object as referenced in the layout file.
+     *
+     * @return
+     */
     private ListView getChecklistListView(){
         if (checklistListView == null){
             checklistListView = (ListView)findViewById(R.id.checklist_listview);
@@ -25,11 +37,23 @@ public class Checklist extends ActionBarActivity {
         return checklistListView;
     }
 
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *  Returns the ArrayAdapter in a valid state by creating an empty Arraylist and attaching it to
+     *   the ListView.
+     *
+     * @return
+     */
     private Checklist_ArrayAdapter getArrayAdapter()
     {
         if (arrayAdapter == null)
         {
             arrayAdapter = new Checklist_ArrayAdapter(this, R.layout.activity_checklist_row, new ArrayList<Checklist_Row>());
+            getChecklistListView().setAdapter(arrayAdapter);
         }
         return arrayAdapter;
     }
@@ -39,18 +63,9 @@ public class Checklist extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checklist);
 
-        // Just for demo...
-        //PopulateDB populateDB = new PopulateDB(this);
+        Checklist_Contract_Db_Helper.getDb_helper(this).addChecklist(new Checklist_Row("Summer", 34));
 
-        // Populate the listView with the contents of the Checklist table.
-        new Runnable() {
-            @Override
-            public void run() {
-                populateListView();
-            }
-        }.run();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -74,11 +89,35 @@ public class Checklist extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *  Before the activity is visible to the user the list is populated.
+     */
     @Override
     protected void onStart() {
         super.onStart();
         // The activity is about to become visible.
+        // Populate the listView with the contents of the Checklist table.
+        new Runnable() {
+            @Override
+            public void run() {
+                populateListView();
+            }
+        }.run();
     }
+
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *  When the activity has resumed from some inactive state. Clear and repopulate the list.
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -94,28 +133,76 @@ public class Checklist extends ActionBarActivity {
             }
         }.run();
     }
+
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     */
     @Override
     protected void onPause() {
         super.onPause();
         // Another activity is taking focus (this activity is about to be "paused").
     }
+
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *
+     */
     @Override
     protected void onStop() {
         super.onStop();
         // The activity is no longer visible (it is now "stopped")
+
+        // Save the state of the activity.
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         // The activity is about to be destroyed.
     }
 
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *  Populates the list view object with the contents of the Checklist table.
+     */
     private void populateListView(){
-        ArrayList<Checklist_Row> rowArrayList = Checklist_Contract_Db_Helper.getDb_helper(this).returnChecklistRows(null);
-        getChecklistListView().setAdapter(getArrayAdapter());
-        getArrayAdapter().addAll(rowArrayList);
-        getChecklistListView().requestLayout();
+
+        // Set the adapter to default state.
+        getArrayAdapter().clear();
+
+        // Get the array adapter and add the feched results to the adapter.
+        getArrayAdapter().addAll(Checklist_Contract_Db_Helper.getDb_helper(this).returnChecklistRows(null));
+
+        // Notify the listview that the data within the adapter has changed and the view needs to
+        //  be redrawn to reflect this change.
+        getArrayAdapter().notifyDataSetChanged();
     }
 
+    /**
+     * @author David Krawchuk
+     * @email krawchukdavid@gmail.com
+     * @date 02/20/2014
+     *
+     * Description:
+     *  When called changes the editMode boolean instance variable.
+     *
+     * @param menuItem
+     */
+    public void menuEditButtonPressed(MenuItem menuItem){
+        isInEditMode = (isInEditMode == true) ? false : true;
+
+        // Change the visual state of the application to indicate edit mode.
+
+    }
 
 }
