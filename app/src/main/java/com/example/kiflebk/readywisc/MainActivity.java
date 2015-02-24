@@ -5,7 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+<<<<<<< HEAD
 import android.util.Log;
+=======
+>>>>>>> pr/2
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,7 +34,7 @@ public class MainActivity extends ActionBarActivity {
         DisplayButton = (Button) findViewById(R.id.DisplayButton);
         getDBButton = (Button) findViewById(R.id.getDBButton);
         final EditText name = (EditText) findViewById(R.id.editText);
-        final EditText email = (EditText) findViewById(R.id.editText2);
+        final EditText email = (EditText) findViewById(R.id.activity_checklist_item_create_qty_edittext);
 
         ctx = this;
 
